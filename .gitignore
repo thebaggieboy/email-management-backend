@@ -1,0 +1,33 @@
+.env
+node_modules
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+
+# Environment variables
+.env
+
+# Node modules
+node_modules
+
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+
+# Cache
+npm-cache
+yarn-cache
+
+
+
+
+
+
