@@ -6,9 +6,53 @@ const emailController = require("../controllers/emailController");
 const templateController = require("../controllers/templateController");
 const auth = require("../middleware/auth");
 
+/**
+ * @swagger
+ * /api/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               companyName:
+ *                 type: string
+ *                 description: The name of the company
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: The user's email address
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: The user's password
+ *             example:
+ *               companyName: "My E-commerce Store"
+ *               email: "user@example.com"
+ *               password: "securepassword123"
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *               example:
+ *                 message: "User registered successfully"
+ *       400:
+ *         description: Bad request (e.g., invalid input)
+ *       500:
+ *         description: Internal server error
+ */
 router.post("/register", authController.register);
-
-
 
 
 
