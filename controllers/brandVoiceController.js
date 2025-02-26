@@ -1,4 +1,7 @@
-exports.saveBrandVoice = async (req, res) => {
+
+const BrandVoice = require("../models/BrandVoice");
+
+exports.createBrandVoice = async (req, res) => {
     try {
       const { tone, commonPhrases } = req.body;
       const brandVoice = new BrandVoice({ userId: req.userId, tone, commonPhrases });

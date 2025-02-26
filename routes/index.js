@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
 const emailController = require("../controllers/emailController");
-
+const brandVoiceController = require("../controllers/brandVoiceController");
 const templateController = require("../controllers/templateController");
 const auth = require("../middleware/auth");
 
@@ -53,8 +53,6 @@ const auth = require("../middleware/auth");
  *         description: Internal server error
  */
 router.post("/register", authController.register);
-
-
 
 /**
  * @swagger
@@ -116,6 +114,44 @@ router.post("/login", authController.login);
  */
 router.post("/emails/connect", auth, emailController.connectGmail);
  
+/**
+ * @swagger
+ * /api/emails/oauth/callback:
+ *   get:
+ *     summary: Handle OAuth callback from Google
+ *     description: This endpoint is called by Google after the user grants permission. It exchanges the authorization code for tokens and saves them to the user's account.
+ *     tags: [Emails]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: code
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The authorization code returned by Google.
+ *     responses:
+ *       200:
+ *         description: Gmail account connected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *               example:
+ *                 message: "Gmail account connected successfully"
+ *       400:
+ *         description: Bad request (e.g., missing or invalid authorization code)
+ *       401:
+ *         description: Unauthorized (e.g., invalid or missing JWT token)
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/emails/oauth/callback", auth, emailController.handleOAuthCallback);
+
 /**
  * @swagger
  * /api/emails/list:
@@ -238,7 +274,8 @@ router.post("/emails/sync", auth, emailController.syncEmails);
 router.post("/emails/classify", auth, emailController.classifyEmail);
 
 
-
+router.post('/emails/brand-voice', auth, brandVoiceController.getBrandVoice)
+router.post('/emails/create-brand-voice', auth, brandVoiceController.createBrandVoice)
 
 
 
