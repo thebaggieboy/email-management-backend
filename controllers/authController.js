@@ -30,9 +30,23 @@ exports.login = async (req, res) => {
 
     // If the passwords match generate a JWT Token and sign it using your-secret-key
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
     res.json({ token });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+//  user profile
+exports.profile = async (req, res) => {
+  try {
+    const { email } = req.body;
+    // Check if user exists in database.
+    const user = await User.findOne({ email });
+  
+    // Returns user
+    res.json({ user });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

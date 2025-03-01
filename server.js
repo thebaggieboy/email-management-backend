@@ -12,7 +12,11 @@ connectDB();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true, // If you need to send cookies or authentication headers
+  }));
+  
 
 // Routes
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));

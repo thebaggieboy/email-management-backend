@@ -37,26 +37,27 @@ exports.connectGmail = async (req, res) => {
 // Add this as a separate route handler
 // This code essentially waits for google to go to my redirect_uri which calls (API_URL/api/email/oauth/)
 // The url is attached to this controller.
+// backend/controllers/emailController.js
 exports.handleOAuthCallback = async (req, res) => {
-  // Gets the code from the url
   const { code } = req.query;
-
+  
   try {
-    // Use the code gotten to generate a JWT token and save to a variable
-    const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
-
-    // Find the logged in user with by the user id
-    const user = await User.findById(req.userId);
+    // Get user from session cookie
+    const token = req.cookies.access_token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId);
+    conole.log("User: ", user)
+    
     if (!user) throw new Error("User not found");
 
-    // Save tokens to the database associated with the user
+    // Exchange code for tokens
+    const { tokens } = await oauth2Client.getToken(code);
     user.googleTokens = tokens;
     await user.save();
 
-    res.json({ message: "Gmail account connected successfully" });
+    res.redirect(`http://localhost:3000/dashboard?oauth_success=true`);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.redirect(`http://localhost:3000/signup?oauth_error=${err.message}`);
   }
 };
 
@@ -71,29 +72,32 @@ const refreshTokens = async (user) => {
 };
 
 // Sync emails
+// backend/controllers/emailController.js
 exports.syncEmails = async (req, res) => {
   try {
-    // Get user
+    // Get user from session cookie
     const user = await User.findById(req.userId);
     if (!user.googleTokens) throw new Error("Gmail not connected");
 
-    await refreshTokens(user); // Refresh tokens if expired
+    await refreshTokens(user);
     oauth2Client.setCredentials(user.googleTokens);
 
-    // Connect to user gmail account usin oauth
     const gmail = google.gmail({ version: "v1", auth: oauth2Client });
-
-    // List of all messages in the gmail
     const response = await gmail.users.messages.list({ userId: "me" });
+    const emails = response.data.messages || [];
 
-    res.json(response.data);
+    // Save emails to database
+    await Email.insertMany(emails.map(msg => ({
+      userId: user._id,
+      gmailId: msg.id,
+      // ... other fields
+    })));
+
+    res.json(emails);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
-
-
 // Get all emails for a user
 exports.getEmails = async (req, res) => {
   try {

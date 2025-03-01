@@ -95,7 +95,7 @@ router.post("/register", authController.register);
  *         description: Internal server error
  */
 router.post("/login", authController.login);
-
+router.post('/profile', auth, authController.profile)
 /**
  * @swagger
  * /api/emails/connect:
@@ -116,7 +116,7 @@ router.post("/emails/connect", auth, emailController.connectGmail);
  
 /**
  * @swagger
- * /api/emails/oauth/callback:
+ * /api/email/oauth/callback:
  *   get:
  *     summary: Handle OAuth callback from Google
  *     description: This endpoint is called by Google after the user grants permission. It exchanges the authorization code for tokens and saves them to the user's account.
@@ -150,7 +150,7 @@ router.post("/emails/connect", auth, emailController.connectGmail);
  *       500:
  *         description: Internal server error
  */
-router.get("/emails/oauth/callback", auth, emailController.handleOAuthCallback);
+router.get("/email/oauth/", auth, emailController.handleOAuthCallback);
 
 /**
  * @swagger
@@ -272,7 +272,7 @@ router.post("/emails/sync", auth, emailController.syncEmails);
  *         description: Internal server error
  */
 router.post("/emails/classify", auth, emailController.classifyEmail);
-
+router.post("/emails/analyze-sentiment", auth, emailController.analyzeSentiment)
 
 router.post('/emails/brand-voice', auth, brandVoiceController.getBrandVoice)
 router.post('/emails/create-brand-voice', auth, brandVoiceController.createBrandVoice)
