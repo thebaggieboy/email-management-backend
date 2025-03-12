@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const { swaggerUi, specs } = require("./swagger");
+const morgan = require("morgan");
 
 
 dotenv.config();
@@ -20,6 +21,12 @@ app.use(cors({
   }));
   
 
+// Add this after your app initialization but before routes
+app.use(morgan("dev")); // Options: combined, common, dev, short, tiny
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
 // Routes
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use("/api", require("./routes"));
