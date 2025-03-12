@@ -20,21 +20,48 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    // Check if user exists in database.
+    
+    // Find user in database
     const user = await User.findOne({ email });
-    if (!user) throw new Error("User not found");
-
-    // If user exists, compare password from request to password in database
+    
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    
+    // Verify password
     const isMatch = await user.comparePassword(password);
-    if (!isMatch) throw new Error("Invalid credentials");
-
-    // If the passwords match generate a JWT Token and sign it using your-secret-key
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
+    
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    
+    // Create JWT token
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    // Send token as HTTP-only cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use secure in production
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
-    res.json({ token });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    
+    // Return user data (excluding password)
+    const userData = {
+      _id: user._id,
+      email: user.email,
+      companyName: user.companyName,
+      // Include other user fields as needed
+    };
+    
+    res.json({ user: userData });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
