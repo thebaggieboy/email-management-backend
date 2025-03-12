@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
      refresh_token:String,
      expiry_date:Number
     },
+  //googleID: { type: String, required:true  },
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -12,9 +12,11 @@ connectDB();
 
 const app = express();
 app.use(express.json());
+// Accepted domain origins
 app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true, // If you need to send cookies or authentication headers
+
+    origin: ['http://localhost:3000', 'https://email-management-backend.onrender.com'],
+    credentials: true, // If you need to send cookies or authentication headers(which i do)
   }));
   
 
@@ -24,4 +26,4 @@ app.use("/api", require("./routes"));
 
 // Access PORT for local server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
