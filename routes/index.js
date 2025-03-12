@@ -4,6 +4,7 @@ const authController = require("../controllers/authController");
 const emailController = require("../controllers/emailController");
 const brandVoiceController = require("../controllers/brandVoiceController");
 const templateController = require("../controllers/templateController");
+const tokenController = require("../controllers/tokenController");
 const auth = require("../middleware/auth");
 
 /**
@@ -96,6 +97,9 @@ router.post("/register", authController.register);
  */
 router.post("/login", authController.login);
 router.post('/profile', auth, authController.profile)
+router.post('user/google-tokens', auth, tokenController.googleTokens)
+
+
 /**
  * @swagger
  * /api/emails/connect:
