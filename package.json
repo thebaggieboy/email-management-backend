@@ -18,6 +18,7 @@
     "dotenv": "^16.4.7",
     "email-management-backend": "file:",
     "express": "^4.21.2",
+    "express-winston": "^4.2.0",
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
@@ -26,7 +27,8 @@
     "openai": "^4.85.4",
     "redis": "^4.7.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

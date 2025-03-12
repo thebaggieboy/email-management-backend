@@ -4,6 +4,8 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const { swaggerUi, specs } = require("./swagger");
 const morgan = require("morgan");
+const winston = require("winston");
+const expressWinston = require("express-winston");
 
 
 dotenv.config();
@@ -27,6 +29,20 @@ app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
+
+// Request logging
+app.use(expressWinston.logger({
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'requests.log' })
+  ],
+  format: winston.format.combine(
+    winston.format.colorize(),
+    winston.format.json()
+  ),
+  meta: true,
+  msg: "HTTP {{req.method}} {{req.url}}",
+}));
 // Routes
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use("/api", require("./routes"));
